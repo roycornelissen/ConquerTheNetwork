@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ConquerTheNetworkApp.Data;
 using Refit;
@@ -13,7 +15,13 @@ namespace ConquerTheNetworkApp.Services
 
 		public ServiceClient()
 		{
-			_client = RestService.For<IConferenceApi>(ApiBaseAddress);
+			// HttpClient needs to be instantiated using the parameterless constructor
+			// otherwise the native handler won't be automatically injected.
+			var httpClient = new HttpClient
+			{
+				BaseAddress = new Uri(ApiBaseAddress)
+			};
+			_client = RestService.For<IConferenceApi>(httpClient);
 		}
 
 		public Task<List<City>> GetCities()
