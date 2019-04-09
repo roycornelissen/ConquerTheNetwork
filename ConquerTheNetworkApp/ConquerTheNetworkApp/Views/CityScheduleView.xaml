@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConquerTheNetworkApp.Views.CityScheduleView"
+             Title="{Binding CityName}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="TimeLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="10" />
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="LineBreakMode" Value="NoWrap" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ListView ItemsSource="{Binding GroupedSlots}" 
+            RefreshCommand="{Binding RefreshCommand}" 
+            IsRefreshing="{Binding IsLoading}" 
+            IsPullToRefreshEnabled="True" IsGroupingEnabled="true" 
+            GroupDisplayBinding="{Binding Key}"
+            ItemSelected="Schedule_OnItemSelected">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <Grid HorizontalOptions="FillAndExpand" Padding="10,10,10,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Orientation="Horizontal" WidthRequest="80" Padding="5" HorizontalOptions="CenterAndExpand" BackgroundColor="Gray" Grid.Column="0">
+                            <Label Text="{Binding StartTimeFormatted}" Style="{StaticResource TimeLabelStyle}" />
+                            <Label Text="-" Style="{StaticResource TimeLabelStyle}" HorizontalOptions="Center"/>
+                            <Label Text="{Binding EndTimeFormatted}" Style="{StaticResource TimeLabelStyle}" />
+                        </StackLayout>
+                        <Label Text="{Binding Title}" FontAttributes="Bold" HorizontalOptions="Start" VerticalOptions="Center" LineBreakMode="TailTruncation" Grid.Column="1" />
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</ContentPage>

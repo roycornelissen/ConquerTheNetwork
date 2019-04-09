@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConquerTheNetworkApp.Views.CityDetailView"
+             Title="{Binding Name}">
+    <StackLayout Padding="5" Spacing="10">
+        <Label Text="{Binding Name}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontSize="20" />
+        <Image WidthRequest="111" HeightRequest="111" Source="{Binding ImageUrl}" />
+        <Button Text="View Schedule" Command="{Binding ViewScheduleCommand}" />
+        <Label Text="{Binding Rating}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" FontSize="36" />
+        <Slider x:Name="RatingSlider" ValueChanged="OnSliderValueChanged" Maximum="5" Minimum="1" Value="{Binding Rating, Mode=TwoWay}" />
+        <Button Command="{Binding RatingCommand}" Text="Send Rating" />
+        <ActivityIndicator HorizontalOptions="Center" IsVisible="{Binding IsLoading}" IsRunning="{Binding IsLoading}" />
+    </StackLayout>
+</ContentPage>
