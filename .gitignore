@@ -253,3 +253,5 @@ paket-files/
 
 # MFractor
 *.droidres.db
+
+**.DS_Store

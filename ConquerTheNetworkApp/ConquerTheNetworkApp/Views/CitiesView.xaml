@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConquerTheNetworkApp.Views.CitiesView"
+    Title="Conference Cities">
+    <ListView ItemsSource="{Binding Cities}" 
+            RefreshCommand="{Binding RefreshCommand}" 
+            IsPullToRefreshEnabled="True" 
+            IsRefreshing="{Binding IsLoading}" 
+            ItemSelected="ListView_OnItemSelected">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ImageCell ImageSource="{Binding ImageUrl}" Text="{Binding Name}">
+                </ImageCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</ContentPage>
