@@ -1,45 +1,65 @@
-﻿using System.Collections.Generic;
+﻿using Akavache;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConquerTheNetworkApp.Services;
 using Xamarin.Forms;
 using ConquerTheNetworkApp.Data;
+using MvvmHelpers;
+using System.Collections.ObjectModel;
 
 namespace ConquerTheNetworkApp.ViewModels
 {
-    class CitiesViewModel : ViewModelBase
-    {
-        private Command refreshCommand;
-        public Command RefreshCommand
-        {
-            get
-            {
-                return refreshCommand ??
-                    (refreshCommand = new Command(async () => await ExecuteRefreshCommand(), () => !IsLoading));
-            }
-        }
+	class CitiesViewModel : ViewModelBase
+	{
+		public CitiesViewModel()
+		{
+			_cities = new ObservableRangeCollection<City>();
+		}
 
-        private async Task ExecuteRefreshCommand()
-        {
-            IsLoading = true;
-            await GetCities();
-            IsLoading = false;
-        }
+		private Command refreshCommand;
+		public Command RefreshCommand
+		{
+			get
+			{
+				return refreshCommand ??
+					(refreshCommand = new Command(() => ExecuteRefreshCommand(), () => !IsLoading));
+			}
+		}
 
-        public async Task GetCities()
-        {
-            var client = new ServiceClient();
-            Cities = await client.GetCities();
-        }
+		private void ExecuteRefreshCommand()
+		{
+			IsLoading = true;
+			GetCities(force: true);
+			IsLoading = false;
+		}
 
-        private IEnumerable<City> _cities;
-        public IEnumerable<City> Cities
-        {
-            get { return _cities; }
-            set
-            {
-                _cities = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+		public void GetCities(bool force = false)
+		{
+			var cache = BlobCache.LocalMachine;
+			cache.GetAndFetchLatest("cities", GetRemoteCitiesAsync,
+				offset =>
+				{
+					TimeSpan elapsed = DateTimeOffset.Now - offset;
+					var invalidate = (force || elapsed > new TimeSpan(hours: 0, minutes: 30, seconds: 0));
+					return invalidate;
+				})
+				.Subscribe((cities) =>
+				{
+					_cities.ReplaceRange(cities);
+				});
+		}
+
+		private async Task<List<City>> GetRemoteCitiesAsync()
+		{
+			var client = new ServiceClient();
+			return await client.GetCities();
+		}
+
+		private ObservableRangeCollection<City> _cities;
+		public ObservableCollection<City> Cities
+		{
+			get { return _cities; }
+		}
+	}
 }

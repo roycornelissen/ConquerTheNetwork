@@ -160,6 +160,9 @@
     <PackageReference Include="Refit">
       <Version>4.6.99</Version>
     </PackageReference>
+    <PackageReference Include="akavache">
+      <Version>6.5.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

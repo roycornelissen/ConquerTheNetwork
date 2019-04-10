@@ -20,11 +20,11 @@ namespace ConquerTheNetworkApp.Views
 			InitializeComponent();
 		}
 
-		protected async override void OnAppearing()
+		protected override void OnAppearing()
 		{
 			base.OnAppearing();
 
-			await ViewModel.GetCities();
+			ViewModel.GetCities();
 		}
 
 		private async void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
