@@ -5,6 +5,7 @@ using ConquerTheNetworkApp.Services;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using MvvmHelpers;
+using Plugin.Connectivity;
 
 namespace ConquerTheNetworkApp.ViewModels
 {
@@ -53,7 +54,13 @@ namespace ConquerTheNetworkApp.ViewModels
 
         public async Task GetSchedule()
         {
-            var client = new ServiceClient();
+			if (!CrossConnectivity.Current.IsConnected)
+			{
+				Notify("You seem to be offline... Try again later.");
+				return;
+			}
+
+			var client = new ServiceClient();
             var schedule = await client.GetScheduleForCity(_cityId);
 
             if (schedule != null)
