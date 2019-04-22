@@ -6,74 +6,82 @@ using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using MvvmHelpers;
 using Plugin.Connectivity;
+using System;
 
 namespace ConquerTheNetworkApp.ViewModels
 {
-    public class CityScheduleViewModel : ViewModelBase
-    {
-        private string _cityId;
+	public class CityScheduleViewModel : ViewModelBase
+	{
+		private string _cityId;
 
-        public CityScheduleViewModel(string cityId, string cityName)
-        {
-            _cityId = cityId;
-            _cityName = cityName;
-            _groupedSlots = new ObservableRangeCollection<Grouping<string, Slot>>();
-        }
+		public CityScheduleViewModel(string cityId, string cityName)
+		{
+			_cityId = cityId;
+			_cityName = cityName;
+			_groupedSlots = new ObservableRangeCollection<Grouping<string, Slot>>();
+		}
 
-        private ObservableRangeCollection<Grouping<string, Slot>> _groupedSlots;
-        public ObservableCollection<Grouping<string, Slot>> GroupedSlots
-        {
-            get
-            {
-                return _groupedSlots;
-            }
-        }
+		private ObservableRangeCollection<Grouping<string, Slot>> _groupedSlots;
+		public ObservableCollection<Grouping<string, Slot>> GroupedSlots
+		{
+			get
+			{
+				return _groupedSlots;
+			}
+		}
 
-        private string _cityName;
-        public string CityName
-        {
-            get { return _cityName; }
-        }
+		private string _cityName;
+		public string CityName
+		{
+			get { return _cityName; }
+		}
 
-        private Command refreshCommand;
-        public Command RefreshCommand
-        {
-            get
-            {
-                return refreshCommand ??
-                    (refreshCommand = new Command(async () => await ExecuteRefreshCommand(), () => !IsLoading));
-            }
-        }
+		private Command refreshCommand;
+		public Command RefreshCommand
+		{
+			get
+			{
+				return refreshCommand ??
+					(refreshCommand = new Command(async () => await ExecuteRefreshCommand(), () => !IsLoading));
+			}
+		}
 
-        private async Task ExecuteRefreshCommand()
-        {
-            IsLoading = true;
-            await GetSchedule();
-            IsLoading = false;
-        }
+		private async Task ExecuteRefreshCommand()
+		{
+			IsLoading = true;
+			await GetSchedule();
+			IsLoading = false;
+		}
 
-        public async Task GetSchedule()
-        {
+		public async Task GetSchedule()
+		{
 			if (!CrossConnectivity.Current.IsConnected)
 			{
 				Notify("You seem to be offline... Try again later.");
 				return;
 			}
 
-			var client = new ServiceClient();
-            var schedule = await client.GetScheduleForCity(_cityId);
+			try
+			{
+				var client = new ServiceClient();
+				var schedule = await client.GetScheduleForCity(_cityId);
 
-            if (schedule != null)
-            {
-                await Task.Run(() => from slot in schedule.Slots
-                                     orderby slot.StartTime
-                                     group slot by slot.DayFormatted
-                                     into slotGroup
-                                     select new Grouping<string, Slot>(slotGroup.Key, slotGroup)).ContinueWith(r =>
-                                     {
-                                         _groupedSlots.ReplaceRange(r.Result);
-                                     });
-            }
-        }
-    }
+				if (schedule != null)
+				{
+					await Task.Run(() => from slot in schedule.Slots
+										 orderby slot.StartTime
+										 group slot by slot.DayFormatted
+										 into slotGroup
+										 select new Grouping<string, Slot>(slotGroup.Key, slotGroup)).ContinueWith(r =>
+										 {
+											 _groupedSlots.ReplaceRange(r.Result);
+										 });
+				}
+			}
+			catch (Exception e)
+			{
+				Notify($"Something went wrong: {e}");
+			}
+		}
+	}
 }
