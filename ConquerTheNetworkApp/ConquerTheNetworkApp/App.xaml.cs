@@ -1,33 +1,48 @@
-﻿using System;
+﻿using Acr.UserDialogs;
 using ConquerTheNetworkApp.Views;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace ConquerTheNetworkApp
 {
-	public partial class App : Application
-	{
-		public App()
-		{
-			InitializeComponent();
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
 
-			MainPage = new NavigationPage(new CitiesView());
-		}
+            Connectivity.ConnectivityChanged += (sender, e) =>
+            {
+                string status = e.NetworkAccess == NetworkAccess.Internet ? "online" : "offline";
+                Notify($"Your connection has changed. You are {status}.");
+            };
 
-		protected override void OnStart()
-		{
-			// Handle when your app starts
-		}
+            MainPage = new NavigationPage(new CitiesView());
+        }
 
-		protected override void OnSleep()
-		{
-			// Handle when your app sleeps
-		}
+        protected void Notify(string message)
+        {
+            var config = new ToastConfig(message)
+              .SetDuration(2000);
 
-		protected override void OnResume()
-		{
-			// Handle when your app resumes
-		}
-	}
+            UserDialogs.Instance.Toast(config);
+        }
+
+        protected override void OnStart()
+        {
+            // Handle when your app starts
+        }
+
+        protected override void OnSleep()
+        {
+            // Handle when your app sleeps
+        }
+
+        protected override void OnResume()
+        {
+            // Handle when your app resumes
+        }
+    }
 }

@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using ConquerTheNetworkApp.Data;
 using MvvmHelpers;
 using System.Collections.ObjectModel;
+using Xamarin.Essentials;
 
 namespace ConquerTheNetworkApp.ViewModels
 {
@@ -36,6 +37,12 @@ namespace ConquerTheNetworkApp.ViewModels
 
         public void GetCities(bool force = false)
         {
+            if (force && Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                Notify("You seem to be offline... Try again later.");
+                return;
+            }
+
             var cache = BlobCache.LocalMachine;
             cache.GetAndFetchLatest("cities", GetRemoteCitiesAsync,
                 offset =>
