@@ -10,7 +10,7 @@
             ItemSelected="ListView_OnItemSelected">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <ImageCell ImageSource="{Binding ImageUrl}" Text="{Binding Name}">
+                <ImageCell ImageSource="{Binding ImageUrl}" Text="{Binding Name}" Detail="{Binding LastUpdated}">
                 </ImageCell>
             </DataTemplate>
         </ListView.ItemTemplate>

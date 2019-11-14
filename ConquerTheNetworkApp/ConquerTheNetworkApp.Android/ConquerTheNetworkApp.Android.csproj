@@ -64,6 +64,9 @@
     <PackageReference Include="Refit">
       <Version>4.8.14</Version>
     </PackageReference>
+    <PackageReference Include="akavache">
+      <Version>6.9.10</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
