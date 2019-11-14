@@ -29,7 +29,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
 <CodesignKey>iPhone Developer</CodesignKey>
-<MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+<MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
