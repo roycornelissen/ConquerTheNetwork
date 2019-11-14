@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using MvvmHelpers;
 using Xamarin.Essentials;
+using System;
 
 namespace ConquerTheNetworkApp.ViewModels
 {
@@ -60,19 +61,26 @@ namespace ConquerTheNetworkApp.ViewModels
                 return;
             }
 
-            var client = new ServiceClient();
-            var schedule = await client.GetScheduleForCity(_cityId);
-
-            if (schedule != null)
+            try
             {
-                await Task.Run(() => from slot in schedule.Slots
-                                     orderby slot.StartTime
-                                     group slot by slot.DayFormatted
-                                     into slotGroup
-                                     select new Grouping<string, Slot>(slotGroup.Key, slotGroup)).ContinueWith(r =>
-                                     {
-                                         _groupedSlots.ReplaceRange(r.Result);
-                                     });
+                var client = new ServiceClient();
+                var schedule = await client.GetScheduleForCity(_cityId);
+
+                if (schedule != null)
+                {
+                    await Task.Run(() => from slot in schedule.Slots
+                                         orderby slot.StartTime
+                                         group slot by slot.DayFormatted
+                                         into slotGroup
+                                         select new Grouping<string, Slot>(slotGroup.Key, slotGroup)).ContinueWith(r =>
+                                         {
+                                             _groupedSlots.ReplaceRange(r.Result);
+                                         });
+                }
+            }
+            catch (Exception e)
+            {
+                Notify($"Something went wrong: {e.Message}");
             }
         }
     }
